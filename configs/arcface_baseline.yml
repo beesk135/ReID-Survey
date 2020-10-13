@@ -1,18 +1,19 @@
 MODEL:
-  PRETRAIN_CHOICE: 'imagenet'
-  # PRETRAIN_PATH: "/content/drive/Shared drives/REID/ReId-Survey-Paper/ReID-Survey/log/market1501/local-AGW-baseline/resnet50_nl_model_120.pth"
-  PRETRAIN_PATH: '/home/thanit456/torch/weights/resnet50-19c8e357.pth'
-  TRANSFER_MODE : 'off'
-  BACKBONE: 'resnet50_nl'
-  WEIGHT_REGULARIZED_TRIPLET: 'on'
-  USE_COS: False # unused config
-  USE_DROPOUT: False
-  BASELINE: 
-    POOL_TYPE: 'gem'
-    COSINE_LOSS_TYPE: ''
-    SCALING_FACTOR: 60.0
-    MARGIN: 0.35
-
+    PRETRAIN_CHOICE: 'imagenet'
+    # PRETRAIN_PATH: "/content/drive/Shared drives/REID/ReId-Survey-Paper/ReID-Survey/log/market1501/local-AGW-baseline/resnet50_nl_model_120.pth"
+    PRETRAIN_PATH: '/home/thanit456/torch/weights/resnet50-19c8e357.pth'
+    TRANSFER_MODE : 'off'
+    BACKBONE: 'resnet50_nl'
+    WEIGHT_REGULARIZED_TRIPLET: 'on'
+    USE_COS: True
+    USE_DROPOUT: False
+    BASELINE: 
+      POOL_TYPE: 'gem'
+      COSINE_LOSS_TYPE: 'ArcFace'
+      SCALING_FACTOR: 30.0
+      MARGIN: 0.5
+    # ? Lack of SEPNORM 
+  
 INPUT:
   IMG_SIZE: [256, 128]
   PROB: 0.5 # random horizontal flip
@@ -33,9 +34,11 @@ SOLVER:
   MAX_EPOCHS: 120
   BASE_LR: 0.00035
   MARGIN: 0.3
+  MOMENTUM: 0.9
 
+  # Center loss will always force using SGD optimizer
   CENTER_LOSS:
-    USE: True
+    USE: False
     LR: 0.5
     # ALPHA: 0.5
     WEIGHT: 0.0005
@@ -55,7 +58,7 @@ SOLVER:
 
   CHECKPOINT_PERIOD: 20
   LOG_PERIOD: 20
-  EVAL_PERIOD: 40
+  EVAL_PERIOD: 20
 
 TEST:
   IMS_PER_BATCH: 64
@@ -76,4 +79,5 @@ EMBEDDING_PROJECTOR:
 
 OUTPUT_DIR: "./log/market1501/Experiment-AGW-baseline"
 
-
+  
+  
