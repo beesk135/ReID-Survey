@@ -64,20 +64,21 @@ class BaseTrainer(object):
             param_list = []
             for k,v in self.model.named_parameters():
                 if 'reduction_' not in k and 'fc_id_' not in k:
-                    v.requires_grad=False#固定参数
+                    v.requires_grad=False
                 else:
                     param_list.append(v)
                     print(k)
-            self.optim = make_optimizer_partial(param_list,opt=self.cfg.SOLVER.OPTIMIZER_NAME,lr=cfg.SOLVER.BASE_LR,weight_decay=self.cfg.SOLVER.WEIGHT_DECAY,momentum=0.9)
+            self.optim = make_optimizer_partial(param_list,opt=self.cfg.SOLVER.OPTIMIZER_NAME,lr=cfg.SOLVER.BASE_LR,weight_decay=self.cfg.SOLVER.WEIGHT_DECAY,momentum=cfg.SOLVER.MOMENTUM)
 
         else:
-            self.optim = make_optimizer(self.model,opt=self.cfg.SOLVER.OPTIMIZER_NAME,lr=cfg.SOLVER.BASE_LR,weight_decay=self.cfg.SOLVER.WEIGHT_DECAY,momentum=0.9)
+            self.optim = make_optimizer(self.model,opt=self.cfg.SOLVER.OPTIMIZER_NAME,lr=cfg.SOLVER.BASE_LR,weight_decay=self.cfg.SOLVER.WEIGHT_DECAY,momentum=cfg.SOLVER.MOMENTUM)
         self.scheduler = WarmupMultiStepLR(self.optim, cfg.SOLVER.STEPS, cfg.SOLVER.GAMMA, cfg.SOLVER.WARMUP_FACTOR,cfg.SOLVER.WARMUP_EPOCH, cfg.SOLVER.WARMUP_METHOD)
         self.logger.info(self.optim)
         
-        if cfg.MODEL.WEIGHT != '':
-            self.logger.info('Loading weight from {}'.format(cfg.MODEL.WEIGHT))
-            param_dict = torch.load(cfg.MODEL.WEIGHT)
+        # ? may be changed corresponding to the original one 
+        if cfg.MODEL.PRETRAIN_PATH != '':
+            self.logger.info('Loading pretrained weights from {}'.format(cfg.MODEL.PRETRAIN_PATH))
+            param_dict = torch.load(cfg.MODEL.PRETRAIN_PATH)
             
             start_with_module = False
             for k in param_dict.keys():
@@ -144,6 +145,7 @@ class BaseTrainer(object):
         self.optim.zero_grad()
         img, target = batch
         img, target = img.cuda(), target.cuda()
+        # !! WARNINIG: USE_COS
         if self.cfg.MODEL.USE_COS:
             outputs = self.model(img,target)
         else:
@@ -203,6 +205,7 @@ class BaseTrainer(object):
         feats = torch.cat(feats, dim=0)
         pids = torch.cat(pids, dim=0)
         camids = torch.cat(camids, dim=0)
+        # ? 
         if self.cfg.TEST.RANDOMPERM <=0 :
             query_feat = feats[:num_query]
             query_pid = pids[:num_query]
