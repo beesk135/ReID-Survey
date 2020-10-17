@@ -57,7 +57,7 @@ class BaseTrainer(object):
         self.model.cuda()
         self.logger.info(self.model)
 
-       
+
         if cfg.SOLVER.FIX_BACKBONE:
 
             print('==>fix backbone')
@@ -74,12 +74,12 @@ class BaseTrainer(object):
             self.optim = make_optimizer(self.model,opt=self.cfg.SOLVER.OPTIMIZER_NAME,lr=cfg.SOLVER.BASE_LR,weight_decay=self.cfg.SOLVER.WEIGHT_DECAY,momentum=cfg.SOLVER.MOMENTUM)
         self.scheduler = WarmupMultiStepLR(self.optim, cfg.SOLVER.STEPS, cfg.SOLVER.GAMMA, cfg.SOLVER.WARMUP_FACTOR,cfg.SOLVER.WARMUP_EPOCH, cfg.SOLVER.WARMUP_METHOD)
         self.logger.info(self.optim)
-        
-        # ? may be changed corresponding to the original one 
+
+        # ? may be changed corresponding to the original one
         if cfg.MODEL.PRETRAIN_PATH != '':
             self.logger.info('Loading pretrained weights from {}'.format(cfg.MODEL.PRETRAIN_PATH))
             param_dict = torch.load(cfg.MODEL.PRETRAIN_PATH)
-            
+
             start_with_module = False
             for k in param_dict.keys():
                 if k.startswith('module.'):
@@ -87,7 +87,7 @@ class BaseTrainer(object):
                     break
             if start_with_module:
                 param_dict = {k[7:] : v for k, v in param_dict.items() }
-    
+
             print('ignore_param:')
             print([k for k, v in param_dict.items() if k not in self.model.state_dict() or self.model.state_dict()[k].size() != v.size()])
             print('unload_param:')
@@ -118,7 +118,7 @@ class BaseTrainer(object):
                              .format(self.train_epoch, self.batch_cnt,
                                      len(self.train_dl), self.loss_avg.avg,
                                      self.acc_avg.avg, self.scheduler.get_lr()[0]))
-            
+
     def handle_new_epoch(self):
 
         self.batch_cnt = 1
@@ -205,7 +205,7 @@ class BaseTrainer(object):
         feats = torch.cat(feats, dim=0)
         pids = torch.cat(pids, dim=0)
         camids = torch.cat(camids, dim=0)
-        # ? 
+        # ?
         if self.cfg.TEST.RANDOMPERM <=0 :
             query_feat = feats[:num_query]
             query_pid = pids[:num_query]
@@ -250,7 +250,7 @@ class BaseTrainer(object):
         self.logger.info('mAP: {:.2%}'.format(mAP))
         for r in self.cfg.TEST.CMC:
             self.logger.info('CMC Rank-{}: {:.2%}'.format(r, cmc[r - 1]))
-        
+
         self.logger.info('average of mAP and rank1: {:.2%}'.format((mAP+cmc[0])/2.0))
         self.logger.info('-' * 20)
 
@@ -266,5 +266,3 @@ class BaseTrainer(object):
         torch.save(self.optim.state_dict(), osp.join(self.output_dir,
                                                      self.cfg.MODEL.NAME + '_epoch' + str(
                                                          self.train_epoch) + '_optim.pth'))
-
-
