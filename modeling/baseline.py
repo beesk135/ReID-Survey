@@ -8,7 +8,7 @@ from .backbones.resnet import ResNet, Bottleneck
 from .backbones.senet import SENet, SEResNetBottleneck, SEBottleneck, SEResNeXtBottleneck
 from .backbones.resnet_ibn_a import resnet50_ibn_a
 from .backbones.resnet_nl import ResNetNL
-from losses import CrossEntropyLabelSmooth, TripletLoss, WeightedRegularizedTriplet, CenterLoss
+from losses import CrossEntropyLabelSmooth, TripletLoss, WeightedRegularizedTriplet, CenterLoss, CircleLoss
 from .layer import GeM
 from .layer.cosine_loss import AdaCos, CosFace, ArcFace
 
@@ -242,20 +242,28 @@ class Baseline(nn.Module):
 
     def get_creterion(self, cfg, num_classes):
         criterion = {}
-        criterion['xent'] = CrossEntropyLabelSmooth(num_classes=num_classes)  # new add by luo
+        criterion['id'] = CrossEntropyLabelSmooth(num_classes=num_classes)  # new add by luo
 
-        print("Weighted Regularized Triplet:", cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET)
-        if cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET == 'on':
-            criterion['triplet'] = WeightedRegularizedTriplet()
+        if cfg.MODEL.METRIC_LOSS.NAME == 'circle':
+            print("metric loss: circle loss ")
+            # ! add cfg.MODEL.METRIC_LOSS.SCALE
+            criterion['metric'] = CircleLoss(m=cfg.MODEL.METRIC_LOSS.MARGIN, s=cfg.MODEL.METRIC_LOSS.SCALE)
+        elif cfg.MODEL.METRIC_LOSS.NAME == 'triplet':
+            print("Weighted Regularized Triplet:", cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET)
+            if cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET == 'on':
+                criterion['metric'] = WeightedRegularizedTriplet()
+            else:
+                # ! have to convert cfg.SOLVER.MARGIN to cfg.MODEL.METRIC_LOSS.MARGIN
+                criterion['metric'] = TripletLoss(margin=cfg.SOLVER.MARGIN)  # triplet loss
         else:
-            criterion['triplet'] = TripletLoss(cfg.SOLVER.MARGIN)  # triplet loss
+            print('Not found metric loss')
 
         if cfg.SOLVER.CENTER_LOSS.USE:
             criterion['center'] = CenterLoss(num_classes=num_classes, feat_dim=cfg.SOLVER.CENTER_LOSS.NUM_FEATS,
                                              use_gpu=True)
 
         def criterion_total(score, feat, target):
-            loss = criterion['xent'](score, target) + criterion['triplet'](feat, target)[0]
+            loss = criterion['id'](score, target) + criterion['metric'](feat, target)[0]
             if cfg.SOLVER.CENTER_LOSS.USE:
                 loss = loss + cfg.SOLVER.CENTER_LOSS.WEIGHT * criterion['center'](feat, target)
             return loss

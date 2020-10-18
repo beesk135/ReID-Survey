@@ -24,7 +24,7 @@ def build_loss_fn(cfg, num_classes):
     # cfg.DATALOADER.NUM_INSTANCE
     if cfg.MODEL.METRIC_LOSS.NAME == 'triplet':
         metric_loss_fn = TripletLoss(margin=cfg.MODEL.METRIC_LOSS.MARGIN)
-    # TODO: convert cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET into cfg.MODEL.METRIC_LOSS_TYPE
+    # TODO: convert cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET into cfg.MODEL.METRIC_LOSS.NAME
     elif cfg.MODEL.METRIC_LOSS.NAME == 'weighted_regularized_triplet':
         metric_loss_fn = WeightedRegularizedTriplet()
     elif cfg.MODEL.METRIC_LOSS.NAME == 'circle':

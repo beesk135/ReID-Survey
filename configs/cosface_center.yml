@@ -12,6 +12,9 @@ MODEL:
       COSINE_LOSS_TYPE: 'CosFace'
       SCALING_FACTOR: 60.0
       MARGIN: 0.35
+    METRIC_LOSS:
+      NAME: 'triplet'
+      MARGIN: 0.3
   
 INPUT:
   IMG_SIZE: [256, 128]
@@ -32,7 +35,6 @@ SOLVER:
   OPTIMIZER_NAME: 'Adam'
   MAX_EPOCHS: 180
   BASE_LR: 3e-4
-  MARGIN: 0.3
   MOMENTUM: 0.0
 
   # Center loss will always force using SGD optimizer

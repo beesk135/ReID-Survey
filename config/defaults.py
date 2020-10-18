@@ -47,6 +47,12 @@ _C.MODEL.BASELINE.MARGIN = 0.35
 _C.MODEL.BASELINE.USE_BNBIAS = False 
 _C.MODEL.BASELINE.USE_SESTN = False 
 
+# metric_loss 
+_C.MODEL.METRIC_LOSS = CN()
+_C.MODEL.METRIC_LOSS.NAME = 'triplet'
+_C.MODEL.METRIC_LOSS.MARGIN = 0.3
+_C.MODEL.METRIC_LOSS.SCALE = 96
+
 # -----------------------------------------------------------------------------
 # INPUT
 # -----------------------------------------------------------------------------
@@ -97,8 +103,6 @@ _C.SOLVER.MAX_EPOCHS = 50
 _C.SOLVER.BASE_LR = 3e-4
 # Momentum
 _C.SOLVER.MOMENTUM = 0.9
-# Margin of triplet loss
-_C.SOLVER.MARGIN = 0.3
 
 ###### Center loss  ######
 
