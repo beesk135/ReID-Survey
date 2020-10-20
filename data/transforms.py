@@ -3,7 +3,7 @@
 import math
 import random
 import torchvision.transforms as T
-from autoaugment import ImageNetPolicy
+from .autoaugment import ImageNetPolicy
 
 def build_transforms(cfg):
   

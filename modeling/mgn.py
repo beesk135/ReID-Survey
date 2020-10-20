@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 from .backbones.resnet import ResNet, Bottleneck
 from .backbones.resnet_ibn_a import resnet50_ibn_a,resnet101_ibn_a
-from .modeling.layers.pooling import GeM, AdaptiveGeM2d
+from .layer.pooling import GeM, AdaptiveGeM2d
 
 
 class MGN(nn.Module):

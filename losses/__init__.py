@@ -40,7 +40,11 @@ def make_losses(cfg, num_classes):
                                         use_gpu=True if cfg.MODEL.DEVICE == "cuda" else False
         )
     def criterion_total(score, feat, target):
-        loss = cfg.SOLVER.ID_LOSS.WEIGHT * criterion['id'](score, target) + cfg.SOLVER.METRIC_LOSS.WEIGHT * criterion['metric'](feat, target)[0]
+        if cfg.SOLVER.METRIC_LOSS.NAME != 'circle':
+            loss = cfg.SOLVER.ID_LOSS.WEIGHT * criterion['id'](score, target) + cfg.SOLVER.METRIC_LOSS.WEIGHT * criterion['metric'](feat, target)[0]
+        else:
+            loss = cfg.SOLVER.ID_LOSS.WEIGHT * criterion['id'](score, target)
+            loss += cfg.SOLVER.METRIC_LOSS.WEIGHT * criterion['metric'](score, target, score.t(), target.t())
         if cfg.SOLVER.CENTER_LOSS.USE:
             loss = loss + cfg.SOLVER.CENTER_LOSS.WEIGHT * criterion['center'](feat, target)
         return loss
