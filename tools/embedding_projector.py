@@ -11,9 +11,9 @@ import numpy as np
 import pickle
 import os
 
-import tensorflow as tf
-import tensorboard as tb
-tf.io.gfile = tb.compat.tensorflow_stub.io.gfile
+# import tensorflow as tf
+# import tensorboard as tb
+# tf.io.gfile = tb.compat.tensorflow_stub.io.gfile
 
 global ITER
 ITER = 0

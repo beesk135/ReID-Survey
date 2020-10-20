@@ -8,7 +8,8 @@ from .backbones.resnet import ResNet, Bottleneck
 from .backbones.senet import SENet, SEResNetBottleneck, SEBottleneck, SEResNeXtBottleneck
 from .backbones.resnet_ibn_a import resnet50_ibn_a
 from .backbones.resnet_nl import ResNetNL
-from .layer import CrossEntropyLabelSmooth, TripletLoss, WeightedRegularizedTriplet, CenterLoss, GeM
+from losses import CrossEntropyLabelSmooth, TripletLoss, WeightedRegularizedTriplet, CenterLoss, CircleLoss
+from .layer import GeM
 from .layer.cosine_loss import AdaCos, CosFace, ArcFace
 
 def weights_init_kaiming(m):
@@ -38,16 +39,16 @@ class Baseline(nn.Module):
     in_planes = 2048
 
     def __init__(self,
-                num_classes, 
-                last_stride, 
-                model_path, 
-                backbone="resnet50", 
-                pool_type="avg", 
-                use_dropout=True, 
+                num_classes,
+                last_stride,
+                model_path,
+                backbone="resnet50",
+                pool_type="avg",
+                use_dropout=True,
                 cosine_loss_type='',
-                s=30.0, 
+                s=30.0,
                 m=0.35,
-                use_bnbias=False, 
+                use_bnbias=False,
                 use_sestn=False,
                 pretrain_choice=None,
                 training=True):
@@ -134,7 +135,7 @@ class Baseline(nn.Module):
                               last_stride=last_stride)
         elif backbone == 'resnet50_ibn_a':
             self.base = resnet50_ibn_a(last_stride, use_sestn=use_sestn)
-    
+
         if pretrain_choice == 'imagenet':
             self.base.load_param(model_path)
             print('Loading pretrained ImageNet model......')
@@ -159,15 +160,15 @@ class Baseline(nn.Module):
         else:
             self.gap = eval(pool_type)
             in_features = self.gap.out_features(in_features)
-        
-        # ? legacy code 
+
+        # ? legacy code
         # if gem_pool:
         #     print("Generalized Mean Pooling")
         #     self.global_pool = GeneralizedMeanPoolingP()
         # else:
         #     print("Global Adaptive Pooling")
         #     self.global_pool = nn.AdaptiveAvgPool2d(1)
-        
+
         # bnneck
         self.bottleneck = nn.BatchNorm1d(in_features)
         if not use_bnbias:
@@ -176,7 +177,7 @@ class Baseline(nn.Module):
         else:
             print("==> using bnneck bias")
         self.bottleneck.apply(weights_init_kaiming)
-        
+
         if cosine_loss_type == '':
             self.classifier = nn.Linear(self.in_planes, self.num_classes, bias=False)
             self.classifier.apply(weights_init_classifier)
@@ -187,7 +188,7 @@ class Baseline(nn.Module):
             else:
                 self.classifier = eval(cosine_loss_type)(in_features, self.num_classes, s, m)
         self.cosine_loss_type = cosine_loss_type
-        self.use_dropout = use_dropout 
+        self.use_dropout = use_dropout
 
     def forward(self, x, label=None):
         global_feat = self.gap(self.base(x))  # (b, 2048, 1, 1)
@@ -203,10 +204,10 @@ class Baseline(nn.Module):
                 # assert label is not None
                 cls_score = self.classifier(feat, label)
             return cls_score, global_feat # global feature for triplet loss
-        else: 
+        else:
             return feat
 
-        # ? legacy code 
+        # ? legacy code
         # if not self.training:
         #     return feat
 
@@ -241,20 +242,28 @@ class Baseline(nn.Module):
 
     def get_creterion(self, cfg, num_classes):
         criterion = {}
-        criterion['xent'] = CrossEntropyLabelSmooth(num_classes=num_classes)  # new add by luo
+        criterion['id'] = CrossEntropyLabelSmooth(num_classes=num_classes)  # new add by luo
 
-        print("Weighted Regularized Triplet:", cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET)
-        if cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET == 'on':
-            criterion['triplet'] = WeightedRegularizedTriplet()
+        if cfg.MODEL.METRIC_LOSS.NAME == 'circle':
+            print("metric loss: circle loss ")
+            # ! add cfg.MODEL.METRIC_LOSS.SCALE
+            criterion['metric'] = CircleLoss(m=cfg.MODEL.METRIC_LOSS.MARGIN, s=cfg.MODEL.METRIC_LOSS.SCALE)
+        elif cfg.MODEL.METRIC_LOSS.NAME == 'triplet':
+            print("Weighted Regularized Triplet:", cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET)
+            if cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET == 'on':
+                criterion['metric'] = WeightedRegularizedTriplet()
+            else:
+                # ! have to convert cfg.SOLVER.MARGIN to cfg.MODEL.METRIC_LOSS.MARGIN
+                criterion['metric'] = TripletLoss(margin=cfg.SOLVER.MARGIN)  # triplet loss
         else:
-            criterion['triplet'] = TripletLoss(cfg.SOLVER.MARGIN)  # triplet loss
+            print('Not found metric loss')
 
         if cfg.SOLVER.CENTER_LOSS.USE:
             criterion['center'] = CenterLoss(num_classes=num_classes, feat_dim=cfg.SOLVER.CENTER_LOSS.NUM_FEATS,
                                              use_gpu=True)
 
         def criterion_total(score, feat, target):
-            loss = criterion['xent'](score, target) + criterion['triplet'](feat, target)[0]
+            loss = criterion['id'](score, target) + criterion['metric'](feat, target)[0]
             if cfg.SOLVER.CENTER_LOSS.USE:
                 loss = loss + cfg.SOLVER.CENTER_LOSS.WEIGHT * criterion['center'](feat, target)
             return loss
