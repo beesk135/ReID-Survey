@@ -12,28 +12,21 @@ def build_loss_fn(cfg, num_classes):
     criterion = {}
 
     # TODO: convert cfg.BASELINE.COSINE_LOSS into cfg.ID_LOSS.NAME
-    if cfg.MODEL.ID_LOSS.NAME == 'none':
+    if cfg.SOLVER.ID_LOSS.NAME == 'xent':
+        id_loss_fn = CrossEntropyLabelSmooth(num_classes=num_classes)
+    else:
         def id_loss_fn(score, target):
             return None
-    else:
-        id_loss_fn = CrossEntropyLabelSmooth(num_classes=num_classes)
     criterion['id'] = id_loss_fn
 
-    # !
-    # TODO: add configs/
-    # cfg.SOLVER.METRIC_LOSS.MARGIN
-    # cfg.SOLVER.METRIC_LOSS.SCALE
-    # cfg.MODEL.SOLVER.BATCH_SIZE
-    # cfg.DATALOADER.NUM_INSTANCE
     if cfg.SOLVER.METRIC_LOSS.NAME == 'triplet':
         metric_loss_fn = TripletLoss(margin=cfg.SOLVER.METRIC_LOSS.MARGIN)
-    # TODO: convert cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET into cfg.SOLVER.METRIC_LOSS.NAME
-    elif cfg.SOLVER.METRIC_LOSS.NAME == 'weighted_regularized_triplet':
+    elif cfg.SOLVER.METRIC_LOSS.NAME == 'weighted_triplet':
         metric_loss_fn = WeightedRegularizedTriplet()
     elif cfg.SOLVER.METRIC_LOSS.NAME == 'circle':
         metric_loss_fn = CircleLoss(m=cfg.SOLVER.METRIC_LOSS.MARGIN, s=cfg.SOLVER.METRIC_LOSS.SCALE)
     elif cfg.SOLVER.METRIC_LOSS.NAME == 'smoothAP':
-        assert(cfg.SOLVER.BATCH_SIZE % cfg.DATALOADER.NUM_INSTANCE == 0)
+        assert(cfg.SOLVER.IMS_PER_BATCH % cfg.DATALOADER.NUM_INSTANCE == 0)
         metric_loss_fn = SmoothAP(anneal=0.01, batch_size=cfg.SOLVER.IMS_PER_BATCH,
                                 num_id=cfg.SOLVER.IMS_PER_BATCH // cfg.DATALOADER.NUM_INSTANCE, feat_dims=2048
         )

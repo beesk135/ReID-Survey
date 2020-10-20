@@ -91,8 +91,11 @@ def main():
         do_test(cfg, model, data_loader, num_query)
         return
 
-    criterion = build_loss_fn(cfg, num_classes)
-    # criterion = model.get_creterion(cfg, num_classes)
+    # ? new 
+    # criterion = build_loss_fn(cfg, num_classes)
+    # ? legacy
+    criterion = model.get_creterion(cfg, num_classes)
+    
     optimizer = model.get_optimizer(cfg, criterion)
 
     # Add for using self trained model

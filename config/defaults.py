@@ -33,8 +33,6 @@ _C.MODEL.TRANSFER_MODE ="off"
 # Use ImageNet pretrained model to initialize backbone or use self trained model to initialize the whole model
 # Options: 'imagenet' or 'self'
 _C.MODEL.PRETRAIN_CHOICE = 'imagenet'
-# If train with weighted regularized triplet loss, options: 'on', 'off'
-_C.MODEL.WEIGHT_REGULARIZED_TRIPLET = 'off'
 # If train with cos 
 _C.MODEL.USE_COS = False
 # If train with dropout
@@ -109,6 +107,10 @@ _C.SOLVER.BASE_LR = 3e-4
 # Momentum
 _C.SOLVER.MOMENTUM = 0.9
 
+# cross entropy loss with label smoothing 
+_C.SOLVER.ID_LOSS = CN()
+_C.SOLVER.ID_LOSS.NAME = 'xent'
+
 # metric_loss 
 _C.SOLVER.METRIC_LOSS = CN()
 _C.SOLVER.METRIC_LOSS.NAME = 'triplet'
@@ -116,7 +118,6 @@ _C.SOLVER.METRIC_LOSS.MARGIN = 0.3
 _C.SOLVER.METRIC_LOSS.SCALE = 96
 
 ###### Center loss  ######
-
 _C.SOLVER.CENTER_LOSS = CN()
 
 _C.SOLVER.CENTER_LOSS.USE = False

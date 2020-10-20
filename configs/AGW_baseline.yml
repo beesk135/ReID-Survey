@@ -5,7 +5,6 @@ MODEL:
   PRETRAIN_PATH: '/home/thanit456/torch/weights/resnet50-19c8e357.pth'
   TRANSFER_MODE : 'off'
   BACKBONE: 'resnet50_nl'
-  WEIGHT_REGULARIZED_TRIPLET: 'on'
   USE_COS: False # unused config
   USE_DROPOUT: False
   BASELINE: 
@@ -36,7 +35,7 @@ SOLVER:
   BASE_LR: 0.00035
 
   METRIC_LOSS:
-    NAME: 'triplet'
+    NAME: 'weighted_triplet'
     MARGIN: 0.3
 
   CENTER_LOSS:

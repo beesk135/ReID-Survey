@@ -246,15 +246,13 @@ class Baseline(nn.Module):
 
         if cfg.SOLVER.METRIC_LOSS.NAME == 'circle':
             print("metric loss: circle loss ")
-            # ! add cfg.SOLVER.METRIC_LOSS.SCALE
             criterion['metric'] = CircleLoss(m=cfg.SOLVER.METRIC_LOSS.MARGIN, s=cfg.SOLVER.METRIC_LOSS.SCALE)
+        elif cfg.SOLVER.METRIC_LOSS.NAME == 'weighted_triplet':
+            print("metric loss: Weighted Regularized Triplet")
+            criterion['metric'] = WeightedRegularizedTriplet()
         elif cfg.SOLVER.METRIC_LOSS.NAME == 'triplet':
-            print("Weighted Regularized Triplet:", cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET)
-            if cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET == 'on':
-                criterion['metric'] = WeightedRegularizedTriplet()
-            else:
-                # ! have to convert cfg.SOLVER.MARGIN to cfg.SOLVER.METRIC_LOSS.MARGIN
-                criterion['metric'] = TripletLoss(margin=cfg.SOLVER.MARGIN)  # triplet loss
+            print("metric loss: triplet")
+            criterion['metric'] = TripletLoss(margin=cfg.SOLVER.METRIC_LOSS.MARGIN)  # triplet loss
         else:
             print('Not found metric loss')
 
