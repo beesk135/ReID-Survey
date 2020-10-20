@@ -17,6 +17,8 @@ from yacs.config import CfgNode as CN
 _C = CN()
 
 _C.MODEL = CN()
+# Architecture name 
+_C.MODEL.ARCHITECTURE_NAME = "baseline"
 # Using cuda or cpu for training
 _C.MODEL.DEVICE = "cuda"
 # ID number of GPU
@@ -46,6 +48,13 @@ _C.MODEL.BASELINE.SCALING_FACTOR = 60.0
 _C.MODEL.BASELINE.MARGIN = 0.35
 _C.MODEL.BASELINE.USE_BNBIAS = False 
 _C.MODEL.BASELINE.USE_SESTN = False 
+
+# for mgn architecture
+_C.MODEL.MGN = CN()
+_C.MODEL.MGN.POOL_TYPE = 'max'
+_C.MODEL.MGN.PART_POOL_TYPE = 'max'
+_C.MODEL.MGN.NUM_SHARE_LAYER3 = 1
+_C.MODEL.MGN.USE_BNBIAS = True
 
 # metric_loss 
 _C.MODEL.METRIC_LOSS = CN()

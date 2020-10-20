@@ -1,21 +1,21 @@
 MODEL:
-    PRETRAIN_CHOICE: 'imagenet'
-    # PRETRAIN_PATH: "/content/drive/Shared drives/REID/ReId-Survey-Paper/ReID-Survey/log/market1501/local-AGW-baseline/resnet50_nl_model_120.pth"
-    PRETRAIN_PATH: '/home/thanit456/torch/weights/resnet50-19c8e357.pth'
-    TRANSFER_MODE : 'off'
-    BACKBONE: 'resnet50_nl'
-    WEIGHT_REGULARIZED_TRIPLET: 'on'
-    USE_COS: False # unused config
-    USE_DROPOUT: False
-    BASELINE: 
-      POOL_TYPE: 'gem'
-      COSINE_LOSS_TYPE: ''
-      SCALING_FACTOR: 60.0
-      MARGIN: 0.35
-    METRIC_LOSS:
-      NAME: 'circle'
-      MARGIN: 0.25
-      SCALE: 96
+  PRETRAIN_CHOICE: 'imagenet'
+  # PRETRAIN_PATH: "/content/drive/Shared drives/REID/ReId-Survey-Paper/ReID-Survey/log/market1501/local-AGW-baseline/resnet50_nl_model_120.pth"
+  PRETRAIN_PATH: '/home/thanit456/torch/weights/resnet50-19c8e357.pth'
+  TRANSFER_MODE : 'off'
+  BACKBONE: 'resnet50_nl'
+  WEIGHT_REGULARIZED_TRIPLET: 'on'
+  USE_COS: False # unused config
+  USE_DROPOUT: False
+  BASELINE: 
+    POOL_TYPE: 'gem'
+    COSINE_LOSS_TYPE: ''
+    SCALING_FACTOR: 60.0
+    MARGIN: 0.35
+  METRIC_LOSS:
+    NAME: 'circle'
+    MARGIN: 0.25
+    SCALE: 96
     
 INPUT:
   IMG_SIZE: [256, 128]

@@ -6,8 +6,7 @@ import torch.nn.functional as F
 
 from .backbones.resnet import ResNet, Bottleneck
 from .backbones.resnet_ibn_a import resnet50_ibn_a,resnet101_ibn_a
-from .backbones.resnext_ibn_a import resnext101_ibn_a
-from .layers.pooling import GeM,GlobalConcatPool2d,GlobalAttnPool2d,GlobalAvgAttnPool2d,GlobalMaxAttnPool2d,GlobalConcatAttnPool2d,AdaptiveGeM2d
+from .modeling.layers.pooling import GeM, AdaptiveGeM2d
 
 
 class MGN(nn.Module):
@@ -22,7 +21,6 @@ class MGN(nn.Module):
         else:
             self.base = eval(backbone)(last_stride=last_stride)
         self.base.load_param(model_path)
-
   
         self.backbone = nn.Sequential(
             self.base.conv1,

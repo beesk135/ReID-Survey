@@ -1,4 +1,5 @@
 MODEL:
+  ARCHITECTURE_NAME: 'baseline'
   PRETRAIN_CHOICE: 'imagenet'
   # PRETRAIN_PATH: "/content/drive/Shared drives/REID/ReId-Survey-Paper/ReID-Survey/log/market1501/local-AGW-baseline/resnet50_nl_model_120.pth"
   PRETRAIN_PATH: '/home/thanit456/torch/weights/resnet50-19c8e357.pth'
