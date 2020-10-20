@@ -3,20 +3,35 @@
 import math
 import random
 import torchvision.transforms as T
-
+from autoaugment import ImageNetPolicy
 
 def build_transforms(cfg):
+  
+    
     normalize_transform = T.Normalize(mean=cfg.INPUT.PIXEL_MEAN, std=cfg.INPUT.PIXEL_STD)
     transforms = {}
-    transforms['train'] = T.Compose([
-        T.Resize(cfg.INPUT.IMG_SIZE),
-        T.RandomHorizontalFlip(p=cfg.INPUT.PROB),
-        T.Pad(cfg.INPUT.PADDING),
-        T.RandomCrop(cfg.INPUT.IMG_SIZE),
-        T.ToTensor(),
-        normalize_transform,
-        RandomErasing(probability=cfg.INPUT.RE_PROB, mean=cfg.INPUT.PIXEL_MEAN, sh=cfg.INPUT.RE_MAX_RATIO)
-    ])
+
+    if cfg.INPUT.USE_AUTOAUGMENT: 
+        transforms['train'] = T.Compose([
+            T.Resize(cfg.INPUT.IMG_SIZE),
+            T.RandomHorizontalFlip(p=cfg.INPUT.PROB),
+            T.Pad(cfg.INPUT.PADDING),
+            T.RandomCrop(cfg.INPUT.IMG_SIZE),
+            ImageNetPolicy(), 
+            T.ToTensor(),
+            normalize_transform,
+            RandomErasing(probability=cfg.INPUT.RE_PROB, mean=cfg.INPUT.PIXEL_MEAN, sh=cfg.INPUT.RE_MAX_RATIO)
+        ])
+    else:
+        transforms['train'] = T.Compose([
+            T.Resize(cfg.INPUT.IMG_SIZE),
+            T.RandomHorizontalFlip(p=cfg.INPUT.PROB),
+            T.Pad(cfg.INPUT.PADDING),
+            T.RandomCrop(cfg.INPUT.IMG_SIZE),
+            T.ToTensor(),
+            normalize_transform,
+            RandomErasing(probability=cfg.INPUT.RE_PROB, mean=cfg.INPUT.PIXEL_MEAN, sh=cfg.INPUT.RE_MAX_RATIO)
+        ])
 
     transforms['eval'] = T.Compose([
             T.Resize(cfg.INPUT.IMG_SIZE),
