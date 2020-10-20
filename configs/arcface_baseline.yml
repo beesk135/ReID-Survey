@@ -13,9 +13,7 @@ MODEL:
     COSINE_LOSS_TYPE: 'ArcFace'
     SCALING_FACTOR: 30.0
     MARGIN: 0.5
-  METRIC_LOSS:
-    NAME: 'triplet'
-    MARGIN: 0.3
+
   # ? Lack of SEPNORM 
   
 INPUT:
@@ -38,6 +36,10 @@ SOLVER:
   MAX_EPOCHS: 120
   BASE_LR: 0.00035
   MOMENTUM: 0.9
+
+  METRIC_LOSS:
+    NAME: 'triplet'
+    MARGIN: 0.3
 
   # Center loss will always force using SGD optimizer
   CENTER_LOSS:

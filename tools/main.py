@@ -9,6 +9,7 @@ sys.path.append('.')
 from config import cfg
 from data import make_data_loader
 from modeling import build_model
+from losses import build_loss_fn
 from utils.lr_scheduler import WarmupMultiStepLR
 from utils.logger import setup_logger
 from tools.train import do_train
@@ -89,7 +90,9 @@ def main():
         # test
         do_test(cfg, model, data_loader, num_query)
         return
-    criterion = model.get_creterion(cfg, num_classes)
+
+    criterion = build_loss_fn(cfg, num_classes)
+    # criterion = model.get_creterion(cfg, num_classes)
     optimizer = model.get_optimizer(cfg, criterion)
 
     # Add for using self trained model

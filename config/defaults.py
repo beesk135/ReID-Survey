@@ -56,12 +56,6 @@ _C.MODEL.MGN.PART_POOL_TYPE = 'max'
 _C.MODEL.MGN.NUM_SHARE_LAYER3 = 1
 _C.MODEL.MGN.USE_BNBIAS = True
 
-# metric_loss 
-_C.MODEL.METRIC_LOSS = CN()
-_C.MODEL.METRIC_LOSS.NAME = 'triplet'
-_C.MODEL.METRIC_LOSS.MARGIN = 0.3
-_C.MODEL.METRIC_LOSS.SCALE = 96
-
 # -----------------------------------------------------------------------------
 # INPUT
 # -----------------------------------------------------------------------------
@@ -114,6 +108,12 @@ _C.SOLVER.MAX_EPOCHS = 50
 _C.SOLVER.BASE_LR = 3e-4
 # Momentum
 _C.SOLVER.MOMENTUM = 0.9
+
+# metric_loss 
+_C.SOLVER.METRIC_LOSS = CN()
+_C.SOLVER.METRIC_LOSS.NAME = 'triplet'
+_C.SOLVER.METRIC_LOSS.MARGIN = 0.3
+_C.SOLVER.METRIC_LOSS.SCALE = 96
 
 ###### Center loss  ######
 

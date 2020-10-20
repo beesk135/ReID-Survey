@@ -244,16 +244,16 @@ class Baseline(nn.Module):
         criterion = {}
         criterion['id'] = CrossEntropyLabelSmooth(num_classes=num_classes)  # new add by luo
 
-        if cfg.MODEL.METRIC_LOSS.NAME == 'circle':
+        if cfg.SOLVER.METRIC_LOSS.NAME == 'circle':
             print("metric loss: circle loss ")
-            # ! add cfg.MODEL.METRIC_LOSS.SCALE
-            criterion['metric'] = CircleLoss(m=cfg.MODEL.METRIC_LOSS.MARGIN, s=cfg.MODEL.METRIC_LOSS.SCALE)
-        elif cfg.MODEL.METRIC_LOSS.NAME == 'triplet':
+            # ! add cfg.SOLVER.METRIC_LOSS.SCALE
+            criterion['metric'] = CircleLoss(m=cfg.SOLVER.METRIC_LOSS.MARGIN, s=cfg.SOLVER.METRIC_LOSS.SCALE)
+        elif cfg.SOLVER.METRIC_LOSS.NAME == 'triplet':
             print("Weighted Regularized Triplet:", cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET)
             if cfg.MODEL.WEIGHT_REGULARIZED_TRIPLET == 'on':
                 criterion['metric'] = WeightedRegularizedTriplet()
             else:
-                # ! have to convert cfg.SOLVER.MARGIN to cfg.MODEL.METRIC_LOSS.MARGIN
+                # ! have to convert cfg.SOLVER.MARGIN to cfg.SOLVER.METRIC_LOSS.MARGIN
                 criterion['metric'] = TripletLoss(margin=cfg.SOLVER.MARGIN)  # triplet loss
         else:
             print('Not found metric loss')

@@ -11,11 +11,7 @@ MODEL:
       POOL_TYPE: 'max'
       PART_POOL_TYPE: 'max'
       USE_BNBIAS: True
-      
-    METRIC_LOSS:
-      NAME: 'triplet'
-      MARGIN: 0.3
-  
+
 INPUT:
     IMG_SIZE: [256, 128]
     PROB: 0.5 # random horizontal flip
@@ -36,6 +32,10 @@ SOLVER:
     MAX_EPOCHS: 120
     BASE_LR: 0.00035
   
+    METRIC_LOSS:
+      NAME: 'triplet'
+      MARGIN: 0.3
+
     CENTER_LOSS:
       USE: True
       LR: 0.5
