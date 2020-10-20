@@ -6,3 +6,5 @@ bash ./train-cosface-market.sh
 bash ./train-cosface_center-market.sh
 bash ./train-adacos-market.sh
 bash ./train-adacos_center-market.sh
+bash ./train-mgn-market.sh
+bash ./train-mgn_center-market.sh
