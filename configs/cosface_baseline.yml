@@ -12,7 +12,7 @@ MODEL:
     COSINE_LOSS_TYPE: 'CosFace'
     SCALING_FACTOR: 60.0
     MARGIN: 0.35
-  
+ 
 INPUT:
   IMG_SIZE: [256, 128]
   PROB: 0.5 # random horizontal flip
@@ -34,7 +34,7 @@ SOLVER:
   BASE_LR: 3e-4
   MOMENTUM: 0.0
 
-  ID_LOSS: 
+  ID_LOSS:
     WEIGHT: 0.333
 
   METRIC_LOSS:
@@ -43,7 +43,7 @@ SOLVER:
 
   # Center loss will always force using SGD optimizer
   CENTER_LOSS:
-    USE: True
+    USE: False
     LR: 0.5
     # ALPHA: 0.5
     WEIGHT: 0.0005

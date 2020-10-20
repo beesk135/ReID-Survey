@@ -8,7 +8,7 @@ MODEL:
   USE_COS: True
   USE_DROPOUT: False
   BASELINE: 
-    POOL_TYPE: 'gem'
+    POOL_TYPE: 'avg'
     COSINE_LOSS_TYPE: 'ArcFace'
     SCALING_FACTOR: 30.0
     MARGIN: 0.5
@@ -36,9 +36,13 @@ SOLVER:
   BASE_LR: 0.00035
   MOMENTUM: 0.9
 
+  ID_LOSS: 
+    WEIGHT: 0.1
+
   METRIC_LOSS:
     NAME: 'weighted_triplet'
     MARGIN: 0.3
+    WEIGHT: 0.9
 
   # Center loss will always force using SGD optimizer
   CENTER_LOSS:

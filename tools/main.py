@@ -10,7 +10,7 @@ from config import cfg
 from data import make_data_loader
 from modeling import build_model
 from losses import make_losses
-from optimizers import make_optimizers 
+from optimizers import make_optmizers 
 from utils.lr_scheduler import WarmupMultiStepLR
 from utils.logger import setup_logger
 from tools.train import do_train
@@ -93,11 +93,11 @@ def main():
         return
 
     # ? new 
-    # criterion = make_losses(cfg, num_classes)
+    criterion = make_losses(cfg, num_classes)
+    optimizer = make_optmizers(cfg, model, criterion)
     # ? legacy
-    criterion = model.get_creterion(cfg, num_classes)
-    
-    optimizer = model.get_optimizer(cfg, criterion)
+    # criterion = model.get_creterion(cfg, num_classes)
+    # optimizer = model.get_optimizer(cfg, criterion)
 
     # Add for using self trained model
     if cfg.MODEL.PRETRAIN_CHOICE == 'self' and cfg.MODEL.TRANSFER_MODE == "off":

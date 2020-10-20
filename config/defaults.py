@@ -116,12 +116,15 @@ _C.SOLVER.MOMENTUM = 0.9
 # cross entropy loss with label smoothing 
 _C.SOLVER.ID_LOSS = CN()
 _C.SOLVER.ID_LOSS.NAME = 'xent'
+_C.SOLVER.ID_LOSS.WEIGHT = 1.0
+
 
 # metric_loss 
 _C.SOLVER.METRIC_LOSS = CN()
 _C.SOLVER.METRIC_LOSS.NAME = 'triplet'
 _C.SOLVER.METRIC_LOSS.MARGIN = 0.3
 _C.SOLVER.METRIC_LOSS.SCALE = 96
+_C.SOLVER.METRIC_LOSS.WEIGHT = 1.0
 
 ###### Center loss  ######
 _C.SOLVER.CENTER_LOSS = CN()
