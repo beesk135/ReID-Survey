@@ -8,7 +8,7 @@ from .cosine_loss import CosFace, AdaCos, ArcFace
 from .triplet_loss import TripletLoss, WeightedRegularizedTriplet
 from .smooth_ap_loss import SmoothAP
 
-def build_loss_fn(cfg, num_classes):
+def make_losses(cfg, num_classes):
     criterion = {}
 
     # TODO: convert cfg.BASELINE.COSINE_LOSS into cfg.ID_LOSS.NAME

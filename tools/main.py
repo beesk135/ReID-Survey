@@ -9,7 +9,8 @@ sys.path.append('.')
 from config import cfg
 from data import make_data_loader
 from modeling import build_model
-from losses import build_loss_fn
+from losses import make_losses
+from optimizers import make_optimizers 
 from utils.lr_scheduler import WarmupMultiStepLR
 from utils.logger import setup_logger
 from tools.train import do_train
@@ -92,7 +93,7 @@ def main():
         return
 
     # ? new 
-    # criterion = build_loss_fn(cfg, num_classes)
+    # criterion = make_losses(cfg, num_classes)
     # ? legacy
     criterion = model.get_creterion(cfg, num_classes)
     

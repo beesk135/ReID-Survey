@@ -100,6 +100,12 @@ _C.DATALOADER.NUM_INSTANCE = 16
 _C.SOLVER = CN()
 # Name of optimizer
 _C.SOLVER.OPTIMIZER_NAME = "Adam"
+
+# ADAM #
+# amsgrad for adam optimizer
+_C.SOLVER.ADAM = CN() 
+_C.SOLVER.ADAM.USE_AMSGRAD = False
+
 # Number of max epoches
 _C.SOLVER.MAX_EPOCHS = 50
 # Base learning rate

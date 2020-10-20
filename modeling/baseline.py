@@ -223,49 +223,49 @@ class Baseline(nn.Module):
                 continue
             self.state_dict()[i].copy_(param_dict[i])
 
-    def get_optimizer(self, cfg, criterion):
-        optimizer = {}
-        params = []
-        lr = cfg.SOLVER.BASE_LR
-        weight_decay = cfg.SOLVER.WEIGHT_DECAY
-        for key, value in self.named_parameters():
-            if not value.requires_grad:
-                continue
-            params += [{"params": [value], "lr": lr, "weight_decay": weight_decay}]
-        if cfg.SOLVER.OPTIMIZER_NAME == 'SGD':
-            optimizer['model'] = getattr(torch.optim, cfg.SOLVER.OPTIMIZER_NAME)(params, momentum=cfg.SOLVER.MOMENTUM)
-        else:
-            optimizer['model'] = getattr(torch.optim, cfg.SOLVER.OPTIMIZER_NAME)(params)
-        if cfg.SOLVER.CENTER_LOSS.USE:
-            optimizer['center'] = torch.optim.SGD(criterion['center'].parameters(), lr=cfg.SOLVER.CENTER_LOSS.LR, momentum=cfg.SOLVER.MOMENTUM)
-        return optimizer
+    # def get_optimizer(self, cfg, criterion):
+    #     optimizer = {}
+    #     params = []
+    #     lr = cfg.SOLVER.BASE_LR
+    #     weight_decay = cfg.SOLVER.WEIGHT_DECAY
+    #     for key, value in self.named_parameters():
+    #         if not value.requires_grad:
+    #             continue
+    #         params += [{"params": [value], "lr": lr, "weight_decay": weight_decay}]
+    #     if cfg.SOLVER.OPTIMIZER_NAME == 'SGD':
+    #         optimizer['model'] = getattr(torch.optim, cfg.SOLVER.OPTIMIZER_NAME)(params, momentum=cfg.SOLVER.MOMENTUM)
+    #     else:
+    #         optimizer['model'] = getattr(torch.optim, cfg.SOLVER.OPTIMIZER_NAME)(params)
+    #     if cfg.SOLVER.CENTER_LOSS.USE:
+    #         optimizer['center'] = torch.optim.SGD(criterion['center'].parameters(), lr=cfg.SOLVER.CENTER_LOSS.LR, momentum=cfg.SOLVER.MOMENTUM)
+    #     return optimizer
 
-    def get_creterion(self, cfg, num_classes):
-        criterion = {}
-        criterion['id'] = CrossEntropyLabelSmooth(num_classes=num_classes)  # new add by luo
+    # def get_creterion(self, cfg, num_classes):
+    #     criterion = {}
+    #     criterion['id'] = CrossEntropyLabelSmooth(num_classes=num_classes)  # new add by luo
 
-        if cfg.SOLVER.METRIC_LOSS.NAME == 'circle':
-            print("metric loss: circle loss ")
-            criterion['metric'] = CircleLoss(m=cfg.SOLVER.METRIC_LOSS.MARGIN, s=cfg.SOLVER.METRIC_LOSS.SCALE)
-        elif cfg.SOLVER.METRIC_LOSS.NAME == 'weighted_triplet':
-            print("metric loss: Weighted Regularized Triplet")
-            criterion['metric'] = WeightedRegularizedTriplet()
-        elif cfg.SOLVER.METRIC_LOSS.NAME == 'triplet':
-            print("metric loss: triplet")
-            criterion['metric'] = TripletLoss(margin=cfg.SOLVER.METRIC_LOSS.MARGIN)  # triplet loss
-        else:
-            print('Not found metric loss')
+    #     if cfg.SOLVER.METRIC_LOSS.NAME == 'circle':
+    #         print("metric loss: circle loss ")
+    #         criterion['metric'] = CircleLoss(m=cfg.SOLVER.METRIC_LOSS.MARGIN, s=cfg.SOLVER.METRIC_LOSS.SCALE)
+    #     elif cfg.SOLVER.METRIC_LOSS.NAME == 'weighted_triplet':
+    #         print("metric loss: Weighted Regularized Triplet")
+    #         criterion['metric'] = WeightedRegularizedTriplet()
+    #     elif cfg.SOLVER.METRIC_LOSS.NAME == 'triplet':
+    #         print("metric loss: triplet")
+    #         criterion['metric'] = TripletLoss(margin=cfg.SOLVER.METRIC_LOSS.MARGIN)  # triplet loss
+    #     else:
+    #         print('Not found metric loss')
 
-        if cfg.SOLVER.CENTER_LOSS.USE:
-            criterion['center'] = CenterLoss(num_classes=num_classes, feat_dim=cfg.SOLVER.CENTER_LOSS.NUM_FEATS,
-                                             use_gpu=True)
+    #     if cfg.SOLVER.CENTER_LOSS.USE:
+    #         criterion['center'] = CenterLoss(num_classes=num_classes, feat_dim=cfg.SOLVER.CENTER_LOSS.NUM_FEATS,
+    #                                          use_gpu=True)
 
-        def criterion_total(score, feat, target):
-            loss = criterion['id'](score, target) + criterion['metric'](feat, target)[0]
-            if cfg.SOLVER.CENTER_LOSS.USE:
-                loss = loss + cfg.SOLVER.CENTER_LOSS.WEIGHT * criterion['center'](feat, target)
-            return loss
+    #     def criterion_total(score, feat, target):
+    #         loss = criterion['id'](score, target) + criterion['metric'](feat, target)[0]
+    #         if cfg.SOLVER.CENTER_LOSS.USE:
+    #             loss = loss + cfg.SOLVER.CENTER_LOSS.WEIGHT * criterion['center'](feat, target)
+    #         return loss
 
-        criterion['total'] = criterion_total
+    #     criterion['total'] = criterion_total
 
-        return criterion
+    #     return criterion
