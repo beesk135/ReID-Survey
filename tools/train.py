@@ -16,7 +16,7 @@ global ITER
 ITER = 0
 
 
-def create_supervised_trainer(model, optimizer, criterion, cetner_loss_weight=0.0, device=None):
+def create_supervised_trainer(cfg, model, optimizer, criterion, cetner_loss_weight=0.0, device=None):
     """
     Factory function for creating a trainer for supervised models
 
@@ -42,7 +42,13 @@ def create_supervised_trainer(model, optimizer, criterion, cetner_loss_weight=0.
         img, target = batch
         img = img.to(device) if torch.cuda.device_count() >= 1 else img
         target = target.to(device) if torch.cuda.device_count() >= 1 else target
-        score, feat = model(img)
+        
+        if cfg.MODEL.USE_COS:
+            score, feat = model(img, target)
+        else: 
+            score, feat = model(img)
+        
+        
         loss = criterion['total'](score, feat, target)
         loss.backward()
         optimizer['model'].step()
@@ -82,9 +88,9 @@ def do_train(
     writer = SummaryWriter(log_dir=cfg.OUTPUT_DIR + '/writer')
 
     if cfg.SOLVER.CENTER_LOSS.USE:
-        trainer = create_supervised_trainer(model, optimizer, criterion, cfg.SOLVER.CENTER_LOSS.WEIGHT, device=device)
+        trainer = create_supervised_trainer(cfg, model, optimizer, criterion, cfg.SOLVER.CENTER_LOSS.WEIGHT, device=device)
     else:
-        trainer = create_supervised_trainer(model, optimizer, criterion, device=device)
+        trainer = create_supervised_trainer(cfg, model, optimizer, criterion, device=device)
 
     evaluator = create_supervised_evaluator(model, metrics={'r1_mAP_mINP': r1_mAP_mINP(num_query, max_rank=50, feat_norm=cfg.TEST.FEAT_NORM)}, device=device)
     checkpointer = ModelCheckpoint(output_dir, cfg.MODEL.BACKBONE, checkpoint_period, n_saved=10, require_empty=False)
