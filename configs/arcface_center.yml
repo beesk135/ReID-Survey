@@ -8,7 +8,6 @@ MODEL:
   USE_COS: True
   USE_DROPOUT: False
   BASELINE: 
-    # POOL_TYPE: 'avg'
     POOL_TYPE: 'gem'
     COSINE_LOSS_TYPE: 'ArcFace'
     SCALING_FACTOR: 30.0
