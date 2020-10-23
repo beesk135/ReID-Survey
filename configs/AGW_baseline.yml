@@ -62,13 +62,6 @@ SOLVER:
   LOG_PERIOD: 20
   EVAL_PERIOD: 40
 
-  # ! 
-  FIX_BACKBONE: False
-
-  # ! 
-  TENSORBOARD:
-    USE: True
-
 TEST:
   IMS_PER_BATCH: 64
   RE_RANKING: 'off'
