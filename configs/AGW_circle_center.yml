@@ -4,12 +4,14 @@ MODEL:
   PRETRAIN_PATH: '/home/thanit456/torch/weights/resnet50-19c8e357.pth'
   TRANSFER_MODE : 'off'
   BACKBONE: 'resnet50_nl'
-  USE_COS: False # unused config
+  USE_COS: True 
   USE_DROPOUT: False
   BASELINE: 
     POOL_TYPE: 'gem'
-    COSINE_LOSS_TYPE: ''
-  
+    COSINE_LOSS_TYPE: 'Circle'
+    MARGIN: 0.25
+    SCALING_FACTOR: 96.0
+
 INPUT:
   IMG_SIZE: [256, 128]
   PROB: 0.5 # random horizontal flip

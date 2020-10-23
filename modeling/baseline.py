@@ -8,9 +8,9 @@ from .backbones.resnet import ResNet, Bottleneck
 from .backbones.senet import SENet, SEResNetBottleneck, SEBottleneck, SEResNeXtBottleneck
 from .backbones.resnet_ibn_a import resnet50_ibn_a
 from .backbones.resnet_nl import ResNetNL
-from losses import CrossEntropyLabelSmooth, TripletLoss, WeightedRegularizedTriplet, CenterLoss, CircleLoss
+from losses import Circle
+from losses.cosine_loss import AdaCos, CosFace, ArcFace
 from .layer import GeM
-from .layer.cosine_loss import AdaCos, CosFace, ArcFace
 
 def weights_init_kaiming(m):
     classname = m.__class__.__name__
@@ -184,7 +184,7 @@ class Baseline(nn.Module):
         else:
             if cosine_loss_type == 'AdaCos':
                 self.classifier = eval(cosine_loss_type)(in_features, self.num_classes, m)
-            # CosFace
+            # CosFace, Arcface, circle
             else:
                 self.classifier = eval(cosine_loss_type)(in_features, self.num_classes, s, m)
         self.cosine_loss_type = cosine_loss_type

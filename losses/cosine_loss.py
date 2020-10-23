@@ -121,7 +121,7 @@ class CosFace(nn.Module):
         # output = logits - (1 - one_hot) + target_logits * one_hot
 
         one_hot = torch.zeros_like(logits)
-        one_hot.scatter_(1, abel.view(-1, 1).long(), 1)
+        one_hot.scatter_(1, label.view(-1, 1).long(), 1)
         output = logits - one_hot * self.m
         # feature re-scale
         output *= self.s

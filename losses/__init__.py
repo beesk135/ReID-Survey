@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from .id_loss import CrossEntropyLabelSmooth
+from .id_loss import CrossEntropyLabelSmooth, Circle
 from .center_loss import CenterLoss
 from .circle_loss import CircleLoss
 from .cosine_loss import CosFace, AdaCos, ArcFace
@@ -11,7 +11,6 @@ from .smooth_ap_loss import SmoothAP
 def make_losses(cfg, num_classes):
     criterion = {}
 
-    # TODO: convert cfg.BASELINE.COSINE_LOSS into cfg.ID_LOSS.NAME
     if cfg.SOLVER.ID_LOSS.NAME == 'xent':
         id_loss_fn = CrossEntropyLabelSmooth(num_classes=num_classes)
     else:

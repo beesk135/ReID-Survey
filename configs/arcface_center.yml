@@ -8,7 +8,8 @@ MODEL:
   USE_COS: True
   USE_DROPOUT: False
   BASELINE: 
-    POOL_TYPE: 'avg'
+    # POOL_TYPE: 'avg'
+    POOL_TYPE: 'gem'
     COSINE_LOSS_TYPE: 'ArcFace'
     SCALING_FACTOR: 30.0
     MARGIN: 0.5
@@ -53,8 +54,9 @@ SOLVER:
     NUM_FEATS: 2048
 
   WEIGHT_DECAY: 5e-4
-  IMS_PER_BATCH: 64
-  # IMS_PER_BATCH: 32
+  # !
+  # IMS_PER_BATCH: 64
+  IMS_PER_BATCH: 32
 
 
   STEPS: [40, 70]
